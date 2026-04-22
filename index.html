@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mood Shelf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #141414;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', 'Courier New', monospace;
+      padding: 40px 16px;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(255,255,220,0.03) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(200,180,140,0.04) 0%, transparent 50%);
+    }
+
+    .receipt-wrap {
+      width: 100%;
+      max-width: 340px;
+      position: relative;
+      filter: drop-shadow(0 20px 60px rgba(0,0,0,0.7)) drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+    }
+
+    /* Perforated top edge */
+    .receipt-wrap::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 18px;
+      background:
+        radial-gradient(circle at 50% 150%, #141414 60%, transparent 61%) -12px 0 / 24px 18px repeat-x,
+        #f4ede0;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Perforated bottom edge */
+    .receipt-wrap::after {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 18px;
+      background:
+        radial-gradient(circle at 50% -50%, #141414 60%, transparent 61%) -12px 0 / 24px 18px repeat-x,
+        #f4ede0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .receipt {
+      background: #f4ede0;
+      padding: 28px 28px 24px;
+      position: relative;
+      z-index: 0;
+    }
+
+    /* Subtle paper texture overlay */
+    .receipt::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .store-name {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      color: #1a1612;
+      text-transform: uppercase;
+    }
+
+    .store-sub {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: #8a7a65;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1.5px dashed #c8b89a;
+      margin: 14px 0;
+    }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      color: #5a4e3e;
+      line-height: 1.7;
+    }
+
+    .mood-status {
+      text-align: center;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      color: #1a1612;
+      padding: 6px 0;
+    }
+
+    .items {
+      margin: 4px 0;
+    }
+
+    .item {
+      margin-bottom: 14px;
+    }
+
+    .item:last-child {
+      margin-bottom: 0;
+    }
+
+    .item-category {
+      font-size: 8.5px;
+      letter-spacing: 0.18em;
+      color: #9a8a72;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .item-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1612;
+      letter-spacing: 0.03em;
+      line-height: 1.3;
+    }
+
+    .item-detail {
+      font-size: 11px;
+      font-weight: 400;
+      color: #5a4e3e;
+      letter-spacing: 0.02em;
+      margin-top: 1px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #1a1612;
+      text-transform: uppercase;
+    }
+
+    /* CSS Barcode */
+    .barcode-wrap {
+      text-align: center;
+      margin: 4px 0 8px;
+    }
+
+    .barcode {
+      display: inline-block;
+      height: 52px;
+      width: 100%;
+      max-width: 240px;
+      background-image: repeating-linear-gradient(
+        90deg,
+        #1a1612 0px, #1a1612 2px,
+        transparent 2px, transparent 4px,
+        #1a1612 4px, #1a1612 5px,
+        transparent 5px, transparent 8px,
+        #1a1612 8px, #1a1612 11px,
+        transparent 11px, transparent 13px,
+        #1a1612 13px, #1a1612 14px,
+        transparent 14px, transparent 17px,
+        #1a1612 17px, #1a1612 20px,
+        transparent 20px, transparent 21px,
+        #1a1612 21px, #1a1612 23px,
+        transparent 23px, transparent 26px,
+        #1a1612 26px, #1a1612 27px,
+        transparent 27px, transparent 29px,
+        #1a1612 29px, #1a1612 32px,
+        transparent 32px, transparent 34px,
+        #1a1612 34px, #1a1612 35px,
+        transparent 35px, transparent 37px,
+        #1a1612 37px, #1a1612 40px,
+        transparent 40px, transparent 43px,
+        #1a1612 43px, #1a1612 44px,
+        transparent 44px, transparent 46px,
+        #1a1612 46px, #1a1612 49px,
+        transparent 49px, transparent 51px,
+        #1a1612 51px, #1a1612 52px,
+        transparent 52px, transparent 55px,
+        #1a1612 55px, #1a1612 58px,
+        transparent 58px, transparent 60px
+      );
+    }
+
+    .barcode-num {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: #5a4e3e;
+      margin-top: 6px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .footer-main {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: #3a3028;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .footer-sub {
+      font-size: 8.5px;
+      letter-spacing: 0.1em;
+      color: #9a8a72;
+      margin-top: 4px;
+    }
+
+    /* Fade in animation */
+    .receipt-wrap {
+      animation: receiptIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes receiptIn {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="receipt-wrap">
+    <div class="receipt">
+      <div class="header">
+        <div class="store-name">Mood Shelf</div>
+        <div class="store-sub">Est. 2026 &middot; NYC</div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="meta-row">
+        <span>TUE 04/21/26</span>
+        <span>18:47</span>
+      </div>
+      <div class="meta-row">
+        <span>CUST #042126</span>
+        <span>REG 01</span>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="mood-status">~ LOCKED IN ~</div>
+
+      <hr class="divider" />
+
+      <div class="items">
+        <div class="item">
+          <div class="item-category">+ Listening</div>
+          <div class="item-title">Nights</div>
+          <div class="item-detail">Frank Ocean</div>
+        </div>
+        <div class="item">
+          <div class="item-category">+ Watching</div>
+          <div class="item-title">Severance S2</div>
+          <div class="item-detail">Ben Stiller &middot; 2025</div>
+        </div>
+        <div class="item">
+          <div class="item-category">+ Reading</div>
+          <div class="item-title">Stoner</div>
+          <div class="item-detail">John Williams</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="total-row">
+        <span>Vibes</span>
+        <span>$0.00</span>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="barcode-wrap">
+        <div class="barcode"></div>
+        <div class="barcode-num">9 042126 184701</div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-main">Thank you for being you</div>
+        <div class="footer-sub">@moodshelf &middot; moodshelf.app</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
