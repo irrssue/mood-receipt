@@ -8,11 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: #141414;
@@ -28,14 +24,243 @@
         radial-gradient(ellipse at 80% 20%, rgba(200,180,140,0.04) 0%, transparent 50%);
     }
 
+    /* ── SCREENS ── */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 340px;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── ONBOARDING SCREEN 1 ── */
+    .ob-title {
+      color: #f4ede0;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 6px;
+      opacity: 0.5;
+    }
+    .ob-heading {
+      color: #f4ede0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-align: center;
+      margin-bottom: 32px;
+      line-height: 1.4;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    .opt-card {
+      border: 1.5px dashed #3a3530;
+      background: transparent;
+      padding: 18px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      width: 100%;
+    }
+    .opt-card:hover { border-color: #8a7a65; }
+    .opt-card.selected {
+      border-color: #f4ede0;
+      background: rgba(244,237,224,0.06);
+    }
+    .opt-card.selected .opt-check { opacity: 1; }
+
+    .opt-icon {
+      font-size: 22px;
+      width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .opt-label {
+      color: #f4ede0;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .opt-sub {
+      color: #8a7a65;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      margin-top: 3px;
+    }
+    .opt-check {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #f4ede0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.2s;
+      font-size: 10px;
+      color: #f4ede0;
+    }
+    .opt-card.selected .opt-check { opacity: 1; }
+
+    /* ── ONBOARDING SCREEN 2 ── */
+    .ob-back {
+      align-self: flex-start;
+      background: none;
+      border: none;
+      color: #8a7a65;
+      font-family: inherit;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 28px;
+      padding: 0;
+    }
+    .ob-back:hover { color: #f4ede0; }
+
+    .input-section {
+      width: 100%;
+      margin-bottom: 24px;
+    }
+    .input-label {
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #8a7a65;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    /* Photo upload */
+    .photo-drop {
+      border: 1.5px dashed #3a3530;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .photo-drop:hover, .photo-drop.dragover {
+      border-color: #8a7a65;
+      background: rgba(244,237,224,0.04);
+    }
+    .photo-drop input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .photo-drop-icon { font-size: 24px; margin-bottom: 8px; }
+    .photo-drop-text {
+      color: #8a7a65;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .photo-preview {
+      width: 100%;
+      max-height: 180px;
+      object-fit: cover;
+      display: none;
+      margin-top: 10px;
+    }
+    .photo-preview.visible { display: block; }
+
+    /* Music input */
+    .yt-input-wrap {
+      position: relative;
+    }
+    .yt-input {
+      width: 100%;
+      background: transparent;
+      border: 1.5px dashed #3a3530;
+      color: #f4ede0;
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 0.05em;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .yt-input::placeholder { color: #4a4035; }
+    .yt-input:focus { border-color: #8a7a65; }
+    .yt-input.error { border-color: #8b3a3a; }
+    .yt-error {
+      font-size: 8px;
+      letter-spacing: 0.12em;
+      color: #8b3a3a;
+      margin-top: 6px;
+      display: none;
+      text-transform: uppercase;
+    }
+    .yt-error.visible { display: block; }
+    .yt-preview {
+      margin-top: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .yt-preview.visible { display: flex; }
+    .yt-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+    }
+    .yt-meta {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      color: #8a7a65;
+      text-transform: uppercase;
+    }
+    .yt-meta strong { color: #f4ede0; display: block; font-size: 11px; margin-bottom: 2px; }
+
+    /* ── CTA BUTTON ── */
+    .cta-btn {
+      width: 100%;
+      background: #f4ede0;
+      border: none;
+      color: #1a1612;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      padding: 16px;
+      cursor: pointer;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .cta-btn:hover { background: #fff8ee; }
+    .cta-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── RECEIPT SCREEN ── */
     .receipt-wrap {
       width: 100%;
       max-width: 340px;
       position: relative;
       filter: drop-shadow(0 20px 60px rgba(0,0,0,0.7)) drop-shadow(0 4px 12px rgba(0,0,0,0.5));
     }
-
-    /* Perforated top edge */
     .receipt-wrap::before {
       content: '';
       display: block;
@@ -44,11 +269,7 @@
       background:
         radial-gradient(circle at 50% 150%, #141414 60%, transparent 61%) -12px 0 / 24px 18px repeat-x,
         #f4ede0;
-      position: relative;
-      z-index: 1;
     }
-
-    /* Perforated bottom edge */
     .receipt-wrap::after {
       content: '';
       display: block;
@@ -57,18 +278,13 @@
       background:
         radial-gradient(circle at 50% -50%, #141414 60%, transparent 61%) -12px 0 / 24px 18px repeat-x,
         #f4ede0;
-      position: relative;
-      z-index: 1;
     }
 
     .receipt {
       background: #f4ede0;
       padding: 28px 28px 24px;
       position: relative;
-      z-index: 0;
     }
-
-    /* Subtle paper texture overlay */
     .receipt::before {
       content: '';
       position: absolute;
@@ -78,248 +294,460 @@
       opacity: 0.6;
     }
 
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
+    .header { text-align: center; margin-bottom: 20px; }
     .store-name {
-      font-size: 22px;
-      font-weight: 700;
-      letter-spacing: 0.25em;
-      color: #1a1612;
-      text-transform: uppercase;
+      font-size: 22px; font-weight: 700;
+      letter-spacing: 0.25em; color: #1a1612; text-transform: uppercase;
     }
-
     .store-sub {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      color: #8a7a65;
-      margin-top: 4px;
-      text-transform: uppercase;
+      font-size: 9px; letter-spacing: 0.15em;
+      color: #8a7a65; margin-top: 4px; text-transform: uppercase;
     }
-
     .divider {
-      border: none;
-      border-top: 1.5px dashed #c8b89a;
-      margin: 14px 0;
+      border: none; border-top: 1.5px dashed #c8b89a; margin: 14px 0;
     }
-
     .meta-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 10px;
-      letter-spacing: 0.05em;
-      color: #5a4e3e;
-      line-height: 1.7;
+      display: flex; justify-content: space-between;
+      font-size: 10px; letter-spacing: 0.05em;
+      color: #5a4e3e; line-height: 1.7;
     }
-
     .mood-status {
-      text-align: center;
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: #1a1612;
-      padding: 6px 0;
+      text-align: center; font-size: 16px; font-weight: 700;
+      letter-spacing: 0.2em; color: #1a1612; padding: 6px 0;
     }
 
-    .items {
-      margin: 4px 0;
-    }
-
-    .item {
-      margin-bottom: 14px;
-    }
-
-    .item:last-child {
-      margin-bottom: 0;
-    }
-
-    .item-category {
-      font-size: 8.5px;
-      letter-spacing: 0.18em;
-      color: #9a8a72;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-
-    .item-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #1a1612;
-      letter-spacing: 0.03em;
-      line-height: 1.3;
-    }
-
-    .item-detail {
-      font-size: 11px;
-      font-weight: 400;
-      color: #5a4e3e;
-      letter-spacing: 0.02em;
-      margin-top: 1px;
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: #1a1612;
-      text-transform: uppercase;
-    }
-
-    /* CSS Barcode */
-    .barcode-wrap {
-      text-align: center;
-      margin: 4px 0 8px;
-    }
-
-    .barcode {
-      display: inline-block;
-      height: 52px;
+    /* Receipt photo section */
+    .receipt-photo {
       width: 100%;
-      max-width: 240px;
+      margin-bottom: 4px;
+    }
+    .receipt-photo img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      display: block;
+      filter: sepia(0.15) contrast(1.05);
+    }
+    .receipt-photo-label {
+      font-size: 8.5px; letter-spacing: 0.18em;
+      color: #9a8a72; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    /* Receipt music section */
+    .receipt-music-thumb {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      filter: sepia(0.2) contrast(1.05);
+      margin-bottom: 4px;
+    }
+
+    .items { margin: 4px 0; }
+    .item { margin-bottom: 14px; }
+    .item:last-child { margin-bottom: 0; }
+    .item-category {
+      font-size: 8.5px; letter-spacing: 0.18em;
+      color: #9a8a72; text-transform: uppercase; margin-bottom: 3px;
+    }
+    .item-title {
+      font-size: 13px; font-weight: 700;
+      color: #1a1612; letter-spacing: 0.03em; line-height: 1.3;
+    }
+    .item-detail {
+      font-size: 11px; font-weight: 400;
+      color: #5a4e3e; letter-spacing: 0.02em; margin-top: 1px;
+    }
+    .total-row {
+      display: flex; justify-content: space-between;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; color: #1a1612; text-transform: uppercase;
+    }
+    .barcode-wrap { text-align: center; margin: 4px 0 8px; }
+    .barcode {
+      display: inline-block; height: 52px; width: 100%; max-width: 240px;
       background-image: repeating-linear-gradient(
         90deg,
-        #1a1612 0px, #1a1612 2px,
-        transparent 2px, transparent 4px,
-        #1a1612 4px, #1a1612 5px,
-        transparent 5px, transparent 8px,
-        #1a1612 8px, #1a1612 11px,
-        transparent 11px, transparent 13px,
-        #1a1612 13px, #1a1612 14px,
-        transparent 14px, transparent 17px,
-        #1a1612 17px, #1a1612 20px,
-        transparent 20px, transparent 21px,
-        #1a1612 21px, #1a1612 23px,
-        transparent 23px, transparent 26px,
-        #1a1612 26px, #1a1612 27px,
-        transparent 27px, transparent 29px,
-        #1a1612 29px, #1a1612 32px,
-        transparent 32px, transparent 34px,
-        #1a1612 34px, #1a1612 35px,
-        transparent 35px, transparent 37px,
-        #1a1612 37px, #1a1612 40px,
-        transparent 40px, transparent 43px,
-        #1a1612 43px, #1a1612 44px,
-        transparent 44px, transparent 46px,
-        #1a1612 46px, #1a1612 49px,
-        transparent 49px, transparent 51px,
-        #1a1612 51px, #1a1612 52px,
-        transparent 52px, transparent 55px,
-        #1a1612 55px, #1a1612 58px,
-        transparent 58px, transparent 60px
+        #1a1612 0px,#1a1612 2px, transparent 2px,transparent 4px,
+        #1a1612 4px,#1a1612 5px, transparent 5px,transparent 8px,
+        #1a1612 8px,#1a1612 11px, transparent 11px,transparent 13px,
+        #1a1612 13px,#1a1612 14px, transparent 14px,transparent 17px,
+        #1a1612 17px,#1a1612 20px, transparent 20px,transparent 21px,
+        #1a1612 21px,#1a1612 23px, transparent 23px,transparent 26px,
+        #1a1612 26px,#1a1612 27px, transparent 27px,transparent 29px,
+        #1a1612 29px,#1a1612 32px, transparent 32px,transparent 34px,
+        #1a1612 34px,#1a1612 35px, transparent 35px,transparent 37px,
+        #1a1612 37px,#1a1612 40px, transparent 40px,transparent 43px,
+        #1a1612 43px,#1a1612 44px, transparent 44px,transparent 46px,
+        #1a1612 46px,#1a1612 49px, transparent 49px,transparent 51px,
+        #1a1612 51px,#1a1612 52px, transparent 52px,transparent 55px,
+        #1a1612 55px,#1a1612 58px, transparent 58px,transparent 60px
       );
     }
-
     .barcode-num {
+      font-size: 9px; letter-spacing: 0.2em; color: #5a4e3e; margin-top: 6px;
+    }
+    .footer { text-align: center; margin-top: 10px; }
+    .footer-main {
+      font-size: 9px; letter-spacing: 0.15em;
+      color: #3a3028; text-transform: uppercase; font-weight: 700;
+    }
+    .footer-sub {
+      font-size: 8.5px; letter-spacing: 0.1em; color: #9a8a72; margin-top: 4px;
+    }
+
+    .receipt-restart {
+      margin-top: 20px;
+      background: none;
+      border: 1.5px dashed #3a3530;
+      color: #8a7a65;
+      font-family: inherit;
       font-size: 9px;
       letter-spacing: 0.2em;
-      color: #5a4e3e;
-      margin-top: 6px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 10px;
-    }
-
-    .footer-main {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      color: #3a3028;
       text-transform: uppercase;
-      font-weight: 700;
+      padding: 12px 24px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
     }
-
-    .footer-sub {
-      font-size: 8.5px;
-      letter-spacing: 0.1em;
-      color: #9a8a72;
-      margin-top: 4px;
-    }
-
-    /* Fade in animation */
-    .receipt-wrap {
-      animation: receiptIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    @keyframes receiptIn {
-      from {
-        opacity: 0;
-        transform: translateY(24px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+    .receipt-restart:hover { color: #f4ede0; border-color: #8a7a65; }
   </style>
 </head>
 <body>
-  <div class="receipt-wrap">
-    <div class="receipt">
-      <div class="header">
-        <div class="store-name">Mood Shelf</div>
-        <div class="store-sub">Est. 2026 &middot; NYC</div>
-      </div>
 
-      <hr class="divider" />
+  <!-- ── SCREEN 1: PICK OPTIONS ── -->
+  <div class="screen active" id="screen-pick">
+    <div class="ob-title">Mood Shelf</div>
+    <div class="ob-heading">what are you<br/>into right now?</div>
 
-      <div class="meta-row">
-        <span>TUE 04/21/26</span>
-        <span>18:47</span>
-      </div>
-      <div class="meta-row">
-        <span>CUST #042126</span>
-        <span>REG 01</span>
-      </div>
-
-      <hr class="divider" />
-
-      <div class="mood-status">~ LOCKED IN ~</div>
-
-      <hr class="divider" />
-
-      <div class="items">
-        <div class="item">
-          <div class="item-category">+ Listening</div>
-          <div class="item-title">Nights</div>
-          <div class="item-detail">Frank Ocean</div>
+    <div class="options-grid">
+      <button class="opt-card" data-opt="photo" onclick="toggleOpt(this)">
+        <div class="opt-icon">📷</div>
+        <div>
+          <div class="opt-label">Photo</div>
+          <div class="opt-sub">upload an image</div>
         </div>
-        <div class="item">
-          <div class="item-category">+ Watching</div>
-          <div class="item-title">Severance S2</div>
-          <div class="item-detail">Ben Stiller &middot; 2025</div>
+        <div class="opt-check">✓</div>
+      </button>
+
+      <button class="opt-card" data-opt="music" onclick="toggleOpt(this)">
+        <div class="opt-icon">🎵</div>
+        <div>
+          <div class="opt-label">Music</div>
+          <div class="opt-sub">youtube link</div>
         </div>
-        <div class="item">
-          <div class="item-category">+ Reading</div>
-          <div class="item-title">Stoner</div>
-          <div class="item-detail">John Williams</div>
+        <div class="opt-check">✓</div>
+      </button>
+
+      <button class="opt-card" data-opt="mood" onclick="toggleOpt(this)">
+        <div class="opt-icon">✦</div>
+        <div>
+          <div class="opt-label">Mood</div>
+          <div class="opt-sub">coming soon</div>
         </div>
+        <div class="opt-check">✓</div>
+      </button>
+    </div>
+
+    <button class="cta-btn" id="btn-next1" onclick="goToScreen2()" disabled>
+      Next →
+    </button>
+  </div>
+
+  <!-- ── SCREEN 2: FILL IN DETAILS ── -->
+  <div class="screen" id="screen-fill">
+    <button class="ob-back" onclick="goBack()">← back</button>
+    <div class="ob-heading" style="font-size:16px; margin-bottom:24px;">add your stuff</div>
+
+    <!-- Photo section -->
+    <div class="input-section" id="fill-photo" style="display:none">
+      <span class="input-label">+ Photo</span>
+      <div class="photo-drop" id="photo-drop"
+           ondragover="e=arguments[0];e.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(arguments[0])">
+        <input type="file" accept="image/*" onchange="handleFileInput(this)" />
+        <div class="photo-drop-icon">↑</div>
+        <div class="photo-drop-text">tap to upload or drag image</div>
       </div>
+      <img class="photo-preview" id="photo-preview" src="" alt="preview" />
+    </div>
 
-      <hr class="divider" />
-
-      <div class="total-row">
-        <span>Vibes</span>
-        <span>$0.00</span>
+    <!-- Music section -->
+    <div class="input-section" id="fill-music" style="display:none">
+      <span class="input-label">+ Music</span>
+      <div class="yt-input-wrap">
+        <input class="yt-input" id="yt-input" type="url"
+               placeholder="https://youtube.com/watch?v=..."
+               oninput="handleYtInput(this)" />
+        <div class="yt-error" id="yt-error">not a valid youtube link</div>
       </div>
-
-      <hr class="divider" />
-
-      <div class="barcode-wrap">
-        <div class="barcode"></div>
-        <div class="barcode-num">9 042126 184701</div>
-      </div>
-
-      <div class="footer">
-        <div class="footer-main">Thank you for being you</div>
-        <div class="footer-sub">@moodshelf &middot; moodshelf.app</div>
+      <div class="yt-preview" id="yt-preview">
+        <img class="yt-thumb" id="yt-thumb" src="" alt="YouTube thumbnail" />
+        <div class="yt-meta">
+          <strong id="yt-title">—</strong>
+          <span id="yt-channel">—</span>
+        </div>
       </div>
     </div>
+
+    <button class="cta-btn" id="btn-generate" onclick="generateReceipt()">
+      Generate Receipt →
+    </button>
   </div>
+
+  <!-- ── SCREEN 3: RECEIPT ── -->
+  <div class="screen" id="screen-receipt">
+    <div class="receipt-wrap">
+      <div class="receipt">
+        <div class="header">
+          <div class="store-name">Mood Shelf</div>
+          <div class="store-sub">Est. 2026 &middot; NYC</div>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="meta-row">
+          <span id="r-date">—</span>
+          <span id="r-time">—</span>
+        </div>
+        <div class="meta-row">
+          <span id="r-cust">CUST #000000</span>
+          <span>REG 01</span>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="mood-status">~ LOCKED IN ~</div>
+
+        <hr class="divider" />
+
+        <!-- Dynamic receipt photo -->
+        <div class="receipt-photo" id="r-photo-block" style="display:none">
+          <div class="item-category" style="margin-bottom:6px">+ Photo</div>
+          <img id="r-photo-img" src="" alt="your photo" />
+          <hr class="divider" style="margin-top:12px" />
+        </div>
+
+        <!-- Dynamic receipt music -->
+        <div class="items" id="r-music-block" style="display:none">
+          <div class="item">
+            <div class="item-category">+ Listening</div>
+            <img class="receipt-music-thumb" id="r-music-thumb" src="" alt="track thumb" />
+            <div class="item-title" id="r-music-title">—</div>
+            <div class="item-detail" id="r-music-channel">—</div>
+          </div>
+        </div>
+
+        <hr class="divider" id="r-items-divider" style="display:none" />
+
+        <div class="total-row">
+          <span>Vibes</span>
+          <span>$0.00</span>
+        </div>
+
+        <hr class="divider" />
+
+        <div class="barcode-wrap">
+          <div class="barcode"></div>
+          <div class="barcode-num" id="r-barcode-num">9 000000 000000</div>
+        </div>
+
+        <div class="footer">
+          <div class="footer-main">Thank you for being you</div>
+          <div class="footer-sub">@moodshelf &middot; moodshelf.app</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="receipt-restart" onclick="restart()">↺ make another</button>
+  </div>
+
+  <script>
+    const state = {
+      selected: new Set(),
+      photoDataUrl: null,
+      ytId: null,
+      ytTitle: null,
+      ytChannel: null,
+    };
+
+    // ── SCREEN 1 ──
+    function toggleOpt(card) {
+      const opt = card.dataset.opt;
+      if (opt === 'mood') return; // coming soon — no-op
+      card.classList.toggle('selected');
+      if (card.classList.contains('selected')) state.selected.add(opt);
+      else state.selected.delete(opt);
+      document.getElementById('btn-next1').disabled = state.selected.size === 0;
+    }
+
+    function goToScreen2() {
+      // Show relevant sections
+      document.getElementById('fill-photo').style.display =
+        state.selected.has('photo') ? 'block' : 'none';
+      document.getElementById('fill-music').style.display =
+        state.selected.has('music') ? 'block' : 'none';
+      switchScreen('screen-fill');
+    }
+
+    function goBack() { switchScreen('screen-pick'); }
+
+    // ── PHOTO ──
+    function handleDrop(e) {
+      e.preventDefault();
+      document.getElementById('photo-drop').classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) loadPhoto(file);
+    }
+
+    function handleFileInput(input) {
+      const file = input.files[0];
+      if (file) loadPhoto(file);
+    }
+
+    function loadPhoto(file) {
+      const reader = new FileReader();
+      reader.onload = ev => {
+        state.photoDataUrl = ev.target.result;
+        const preview = document.getElementById('photo-preview');
+        preview.src = ev.target.result;
+        preview.classList.add('visible');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // ── MUSIC / YOUTUBE ──
+    function parseYtId(url) {
+      try {
+        const u = new URL(url.trim());
+        if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('?')[0];
+        if (u.hostname.includes('youtube.com')) return u.searchParams.get('v');
+      } catch (_) {}
+      return null;
+    }
+
+    function handleYtInput(input) {
+      const val = input.value.trim();
+      const errEl = document.getElementById('yt-error');
+      const previewEl = document.getElementById('yt-preview');
+
+      if (!val) {
+        input.classList.remove('error');
+        errEl.classList.remove('visible');
+        previewEl.classList.remove('visible');
+        state.ytId = null;
+        return;
+      }
+
+      const id = parseYtId(val);
+      if (!id) {
+        input.classList.add('error');
+        errEl.classList.add('visible');
+        previewEl.classList.remove('visible');
+        state.ytId = null;
+        return;
+      }
+
+      input.classList.remove('error');
+      errEl.classList.remove('visible');
+      state.ytId = id;
+
+      // Show thumbnail immediately (no API needed)
+      document.getElementById('yt-thumb').src =
+        `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+      document.getElementById('yt-title').textContent = 'youtube track';
+      document.getElementById('yt-channel').textContent = '—';
+
+      // Try oEmbed for real title (no API key needed)
+      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`)
+        .then(r => r.json())
+        .then(data => {
+          state.ytTitle = data.title;
+          state.ytChannel = data.author_name;
+          document.getElementById('yt-title').textContent = data.title;
+          document.getElementById('yt-channel').textContent = data.author_name;
+        })
+        .catch(() => {
+          state.ytTitle = 'youtube track';
+          state.ytChannel = '—';
+        });
+
+      previewEl.classList.add('visible');
+    }
+
+    // ── GENERATE RECEIPT ──
+    function generateReceipt() {
+      const now = new Date();
+      const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+      const months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+      const dateStr = `${days[now.getDay()]} ${String(now.getDate()).padStart(2,'0')}/${months[now.getMonth()]}/${String(now.getFullYear()).slice(2)}`;
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const custNum = String(now.getFullYear()).slice(2) + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0');
+
+      document.getElementById('r-date').textContent = dateStr;
+      document.getElementById('r-time').textContent = timeStr;
+      document.getElementById('r-cust').textContent = `CUST #${custNum}`;
+      document.getElementById('r-barcode-num').textContent = `9 ${custNum} ${String(now.getTime()).slice(-6)}`;
+
+      // Photo block
+      const photoBlock = document.getElementById('r-photo-block');
+      if (state.selected.has('photo') && state.photoDataUrl) {
+        document.getElementById('r-photo-img').src = state.photoDataUrl;
+        photoBlock.style.display = 'block';
+      } else {
+        photoBlock.style.display = 'none';
+      }
+
+      // Music block
+      const musicBlock = document.getElementById('r-music-block');
+      const itemsDivider = document.getElementById('r-items-divider');
+      if (state.selected.has('music') && state.ytId) {
+        document.getElementById('r-music-thumb').src =
+          `https://img.youtube.com/vi/${state.ytId}/mqdefault.jpg`;
+        document.getElementById('r-music-title').textContent = state.ytTitle || 'youtube track';
+        document.getElementById('r-music-channel').textContent = state.ytChannel || '—';
+        musicBlock.style.display = 'block';
+        itemsDivider.style.display = 'block';
+      } else {
+        musicBlock.style.display = 'none';
+        itemsDivider.style.display = 'none';
+      }
+
+      switchScreen('screen-receipt');
+    }
+
+    // ── RESTART ──
+    function restart() {
+      state.selected.clear();
+      state.photoDataUrl = null;
+      state.ytId = null;
+      state.ytTitle = null;
+      state.ytChannel = null;
+
+      document.querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById('btn-next1').disabled = true;
+
+      const preview = document.getElementById('photo-preview');
+      preview.src = '';
+      preview.classList.remove('visible');
+
+      document.getElementById('yt-input').value = '';
+      document.getElementById('yt-preview').classList.remove('visible');
+      document.getElementById('yt-error').classList.remove('visible');
+
+      switchScreen('screen-pick');
+    }
+
+    function switchScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      // Re-trigger animation
+      el.style.animation = 'none';
+      el.offsetHeight;
+      el.style.animation = '';
+    }
+  </script>
 </body>
 </html>
