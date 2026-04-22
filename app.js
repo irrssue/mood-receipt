@@ -222,10 +222,12 @@ function miTick() {
 }
 
 function miToggle() {
-  if (!ytPlayer) return;
-  const playerState = ytPlayer.getPlayerState();
-  if (playerState === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
-  else ytPlayer.playVideo();
+  if (!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+  try {
+    const playerState = ytPlayer.getPlayerState();
+    if (playerState === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
+    else ytPlayer.playVideo();
+  } catch (e) {}
 }
 
 function miSkip(sec) {
