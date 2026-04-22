@@ -334,14 +334,146 @@
       margin-bottom: 6px;
     }
 
-    /* Receipt music section */
-    .receipt-music-thumb {
+    /* Receipt music — Dynamic Island player */
+    .music-island {
+      background: #111;
+      border-radius: 20px;
+      padding: 10px 12px 10px 10px;
       width: 100%;
-      aspect-ratio: 16/9;
+    }
+
+    .music-island-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .music-island-art {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
       object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .music-island-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .music-island-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .music-island-artist {
+      font-size: 9.5px;
+      font-weight: 400;
+      color: #888;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .music-island-waveform {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    .music-island-waveform span {
       display: block;
-      filter: sepia(0.2) contrast(1.05);
-      margin-bottom: 4px;
+      width: 2.5px;
+      background: #555;
+      border-radius: 1px;
+      animation: wave 0.8s ease-in-out infinite alternate;
+    }
+
+    .music-island-waveform span:nth-child(1) { height: 6px;  animation-delay: 0s; }
+    .music-island-waveform span:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+    .music-island-waveform span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+    .music-island-waveform span:nth-child(4) { height: 16px; animation-delay: 0.05s; }
+    .music-island-waveform span:nth-child(5) { height: 8px;  animation-delay: 0.15s; }
+
+    .music-island.playing .music-island-waveform span { background: #fff; }
+
+    @keyframes wave {
+      from { transform: scaleY(0.4); }
+      to   { transform: scaleY(1); }
+    }
+
+    .music-island-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .music-island-time {
+      font-size: 8px;
+      color: #666;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+      min-width: 24px;
+    }
+
+    .music-island-bar {
+      flex: 1;
+      height: 3px;
+      background: #333;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .music-island-bar-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.5s linear;
+    }
+
+    .music-island-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .mi-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      opacity: 0.9;
+    }
+
+    .mi-btn:active { opacity: 0.5; }
+
+    .mi-btn svg { display: block; }
+
+    .music-island-iframe {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
     }
 
     .items { margin: 4px 0; }
@@ -531,12 +663,39 @@
 
         <!-- Dynamic receipt music -->
         <div class="items" id="r-music-block" style="display:none">
-          <div class="item">
-            <div class="item-category">+ Listening</div>
-            <img class="receipt-music-thumb" id="r-music-thumb" src="" alt="track thumb" />
-            <div class="item-title" id="r-music-title">—</div>
-            <div class="item-detail" id="r-music-channel">—</div>
+          <div class="item-category">+ Listening</div>
+          <div class="music-island" id="music-island">
+            <div class="music-island-top">
+              <img class="music-island-art" id="r-music-thumb" src="" alt="" />
+              <div class="music-island-info">
+                <div class="music-island-title" id="r-music-title">—</div>
+                <div class="music-island-artist" id="r-music-channel">—</div>
+              </div>
+              <div class="music-island-waveform">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+            <div class="music-island-progress">
+              <span class="music-island-time" id="mi-cur">0:00</span>
+              <div class="music-island-bar" id="mi-bar" onclick="miSeek(event)">
+                <div class="music-island-bar-fill" id="mi-fill"></div>
+              </div>
+              <span class="music-island-time" id="mi-dur">0:00</span>
+            </div>
+            <div class="music-island-controls">
+              <button class="mi-btn" onclick="miSkip(-10)" title="−10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+              </button>
+              <button class="mi-btn" id="mi-play-btn" onclick="miToggle()">
+                <svg id="mi-play-icon" width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+                <svg id="mi-pause-icon" width="32" height="32" viewBox="0 0 24 24" fill="white" style="display:none"><path d="M6 19h4V5H6zm8-14v14h4V5z"/></svg>
+              </button>
+              <button class="mi-btn" onclick="miSkip(10)" title="+10s">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="white"><path d="M18 6h-2v12h2zm-3.5 6L6 6v12z"/></svg>
+              </button>
+            </div>
           </div>
+          <iframe id="yt-player-iframe" class="music-island-iframe" allow="autoplay" src=""></iframe>
         </div>
 
         <hr class="divider" id="r-items-divider" style="display:none" />
@@ -707,8 +866,10 @@
           `https://img.youtube.com/vi/${state.ytId}/mqdefault.jpg`;
         document.getElementById('r-music-title').textContent = state.ytTitle || 'youtube track';
         document.getElementById('r-music-channel').textContent = state.ytChannel || '—';
+        miReset();
         musicBlock.style.display = 'block';
         itemsDivider.style.display = 'block';
+        miInitPlayer(state.ytId);
       } else {
         musicBlock.style.display = 'none';
         itemsDivider.style.display = 'none';
@@ -719,6 +880,8 @@
 
     // ── RESTART ──
     function restart() {
+      if (ytPlayer && typeof ytPlayer.stopVideo === 'function') ytPlayer.stopVideo();
+      miReset();
       state.selected.clear();
       state.photoDataUrl = null;
       state.ytId = null;
@@ -737,6 +900,89 @@
       document.getElementById('yt-error').classList.remove('visible');
 
       switchScreen('screen-pick');
+    }
+
+    // ── MUSIC ISLAND PLAYER ──
+    let ytPlayer = null;
+    let miTimer = null;
+
+    function miInitPlayer(videoId) {
+      miReset();
+      if (!window.YT) {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+        window.onYouTubeIframeAPIReady = () => miCreatePlayer(videoId);
+      } else {
+        miCreatePlayer(videoId);
+      }
+    }
+
+    function miCreatePlayer(videoId) {
+      if (ytPlayer) { ytPlayer.destroy(); ytPlayer = null; }
+      ytPlayer = new YT.Player('yt-player-iframe', {
+        videoId,
+        playerVars: { autoplay: 0, controls: 0, modestbranding: 1 },
+        events: {
+          onStateChange: (e) => {
+            const playing = e.data === YT.PlayerState.PLAYING;
+            document.getElementById('music-island').classList.toggle('playing', playing);
+            document.getElementById('mi-play-icon').style.display = playing ? 'none' : 'block';
+            document.getElementById('mi-pause-icon').style.display = playing ? 'block' : 'none';
+            if (playing) {
+              miTimer = setInterval(miTick, 500);
+            } else {
+              clearInterval(miTimer);
+            }
+          },
+          onReady: (e) => {
+            const dur = e.target.getDuration();
+            document.getElementById('mi-dur').textContent = miFormat(dur);
+          }
+        }
+      });
+    }
+
+    function miTick() {
+      if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+      const cur = ytPlayer.getCurrentTime();
+      const dur = ytPlayer.getDuration();
+      document.getElementById('mi-cur').textContent = miFormat(cur);
+      document.getElementById('mi-fill').style.width = dur ? `${(cur / dur) * 100}%` : '0%';
+    }
+
+    function miToggle() {
+      if (!ytPlayer) return;
+      const state = ytPlayer.getPlayerState();
+      if (state === YT.PlayerState.PLAYING) ytPlayer.pauseVideo();
+      else ytPlayer.playVideo();
+    }
+
+    function miSkip(sec) {
+      if (!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+      ytPlayer.seekTo(ytPlayer.getCurrentTime() + sec, true);
+    }
+
+    function miSeek(e) {
+      if (!ytPlayer || typeof ytPlayer.getDuration !== 'function') return;
+      const bar = document.getElementById('mi-bar');
+      const ratio = e.offsetX / bar.offsetWidth;
+      ytPlayer.seekTo(ytPlayer.getDuration() * ratio, true);
+    }
+
+    function miReset() {
+      clearInterval(miTimer);
+      document.getElementById('mi-fill').style.width = '0%';
+      document.getElementById('mi-cur').textContent = '0:00';
+      document.getElementById('mi-dur').textContent = '0:00';
+      document.getElementById('mi-play-icon').style.display = 'block';
+      document.getElementById('mi-pause-icon').style.display = 'none';
+      document.getElementById('music-island').classList.remove('playing');
+    }
+
+    function miFormat(sec) {
+      sec = Math.floor(sec || 0);
+      return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
     }
 
     function switchScreen(id) {
