@@ -908,13 +908,15 @@
 
     function miInitPlayer(videoId) {
       miReset();
-      if (!window.YT) {
-        const tag = document.createElement('script');
-        tag.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(tag);
-        window.onYouTubeIframeAPIReady = () => miCreatePlayer(videoId);
-      } else {
+      if (window.YT && window.YT.Player) {
         miCreatePlayer(videoId);
+      } else {
+        window.onYouTubeIframeAPIReady = () => miCreatePlayer(videoId);
+        if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) {
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          document.head.appendChild(tag);
+        }
       }
     }
 
